@@ -1,1 +1,1 @@
-worker: python TaskWarriorBotWebhook.py
+web: gunicorn application:app
