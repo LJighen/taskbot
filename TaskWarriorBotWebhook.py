@@ -8,6 +8,8 @@ import shlex
 import os
 import ParsingFunctions
 
+from webhooks import webhook
+from webhooks.senders import targeted
 
 # -------------------------BOT_COMMAND----------------------------
 def start(bot, update):
@@ -53,6 +55,7 @@ def remove_keyboard(bot, update):
 
 
 # ----------------------------------------------------------------
+
 
 # Eneable logging
 logger = logging.getLogger(__name__)
@@ -190,6 +193,10 @@ def error(bot, update, error):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, error)
 
+@webhook(sender_callable=targeted.sender)
+def basic(url, wife, husband):
+    return {"husband": husband, "wife": wife}
+
 
 def main():
     """Start the bot."""
@@ -215,21 +222,13 @@ def main():
     # log all errors
     dp.add_error_handler(error)
 
+
     # Start the Bot
-    updater.start_polling()
-
-    # Run the bot until you press Ctrl-C or the process receives SIGINT,
-    # SIGTERM or SIGABRT. This should be used most of the time, since
-    # start_polling() is non-blocking and will stop the bot gracefully.
-    updater.idle()
-
-
-
-    # add handlers
     updater.start_webhook(listen="0.0.0.0",
                         port=port,
                         url_path=token)
-    updater.bot.set_webhook("https://<appname>.herokuapp.com/" + token)
+    updater.bot.set_webhook("https://provataskbot.herokuapp.com/" + token)
+
     updater.idle()
 
 if __name__ == '__main__':
